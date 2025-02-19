@@ -1,4 +1,5 @@
-# Description
+# Create a perfect opponent for Connect-4
+## Description
 My python code for the "Puissance4 IA" project
 
 The goal was to create with my class a competition : Create the best Puissance4's script and beat everyone !
