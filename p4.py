@@ -123,9 +123,9 @@ class Puissance4:
             elif self.nombre_jetons_victoire*"X" in chaine:
                 nombre=1  
                            
-        L=self.diagonale() # on teste en diagonale si des pions sont alignes
-        for i in range(len(L)):
-            chaine="".join(L[i])
+        grille_l=self.diagonale() # on teste en diagonale si des pions sont alignes
+        for i in range(len(grille_l)):
+            chaine="".join(grille_l[i])
             if self.nombre_jetons_victoire*"O" in chaine and self.nombre_jetons_victoire*"X" in chaine :
                 return( plein,2)
             else :
@@ -189,12 +189,12 @@ class Puissance4:
         -------
         None
         """
-        L=self.grille
+        grille_l=self.grille
         for i in range(self.colonne):
-            chaine=''.join(L[i])
+            chaine=''.join(grille_l[i])
             chaine=chaine.replace(' ','')
-            L[i]=[' ' for i in range(self.rangee-len(chaine))]+list(chaine)
-        self.grille=L
+            grille_l[i]=[' ' for _ in range(self.rangee-len(chaine))]+list(chaine)
+        self.grille=grille_l
     
     ##Decalage
     
@@ -203,7 +203,7 @@ class Puissance4:
         decale toutes les colonnes vers la droite
         ne retourne rien
         """
-        nouvelle_liste=[["" for i in range(self.rangee)]for i in range(self.colonne)]
+        nouvelle_liste=[["" for _ in range(self.rangee)]for _ in range(self.colonne)]
         for i in range(len(self.grille)-1):
             nouvelle_liste[i+1]=self.grille[i]
         nouvelle_liste[0]=self.grille[-1]
@@ -214,7 +214,7 @@ class Puissance4:
         decale toutes les colonnes vers la gauche
         ne retourne rien
         """
-        for i in range((self.colonne)-1):
+        for _ in range((self.colonne)-1):
             self.decalage_droit()
     
     ##Rotation
@@ -224,10 +224,10 @@ class Puissance4:
         puis on utilise la fonction gravite pour faire "descendre" tout les pions qui n'aurait
         plus de pions en dessous d'eux 
         """
-        L=self.m_transpose()
-        for i in range(len(L)):
-            L[i].reverse()
-        self.grille=L
+        grille_l=self.m_transpose()
+        for i in range(len(grille_l)):
+            grille_l[i].reverse()
+        self.grille=grille_l
         self.colonne,self.rangee=self.rangee,self.colonne
         self.gravite()     
         
@@ -238,35 +238,35 @@ class Puissance4:
         puis on utilise la fonction gravite pour faire "descendre" tout les pions qui n'aurait
         plus de pions en dessous d'eux 
         """
-        L=self.m_transpose()
-        for i in range(len(L)//2):
-            L[i],L[len(L)-1-i]=L[len(L)-1-i],L[i]
-        self.grille=L
+        grille_l=self.m_transpose()
+        for i in range(len(grille_l)//2):
+            grille_l[i],grille_l[len(grille_l)-1-i]=grille_l[len(grille_l)-1-i],grille_l[i]
+        self.grille=grille_l
         self.colonne,self.rangee=self.rangee,self.colonne
         self.gravite()
     
     ##Fonctions  pour la rotation 
     @staticmethod
     def m_nulle(n,m):
-        L=[0]*n
-        for i in range(len(L)):
-            L[i]=[0]*m
-        return(L)
+        grille_l=[0]*n
+        for i in range(len(grille_l)):
+            grille_l[i]=[0]*m
+        return(grille_l)
     @staticmethod
-    def m_taille(L):
-        n=len(L)
-        m=len(L[0])
+    def m_taille(grille_l):
+        n=len(grille_l)
+        m=len(grille_l[0])
         return((n,m))
 
     def m_transpose(self):
         M=list(self.grille)
         n1,m1=self.m_taille(M)
         m,n=self.m_taille(M)
-        L=self.m_nulle(n,m)
+        grille_l=self.m_nulle(n,m)
         for i in range(m1):
             for k in range(n1):
-                L[i][k]=M[k][i]
-        return(L)
+                grille_l[i][k]=M[k][i]
+        return(grille_l)
     
     ##Bombe
 

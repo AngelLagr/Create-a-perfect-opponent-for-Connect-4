@@ -2,7 +2,7 @@
 from copy import deepcopy
 
 from p4 import * 
-from p4_utils import *
+from p4_utils import arb_p4, minimax, eval, trajet, quelcoup
 
 ##IA
 
@@ -14,7 +14,7 @@ class IA():
         self.__difficulte=difficulte
         self.__derniercoup=derniercoup
         if etat=="":
-            self.__etat=[[" " for i in range(rangee)] for i in range(colonne)]
+            self.__etat=[[" " for _ in range(rangee)] for _ in range(colonne)]
         else:
             self.__etat=etat
         self.__nombre_jetons_victoire=nombre_jetons_victoire
@@ -92,9 +92,9 @@ class IA():
         return a_copie
     
     def jouer_coup(self,jeu:Puissance4):
-        Arb=arb_P4(self.difficulte,jeu,[jeu.derniers_coups[0],jeu.derniers_coups[1]],1)
-        minimax(Arb,Evaluation,1,self.difficulte)   
-        coupIA=f"{quelcoup(trajet(Arb))}"
-        jeu.jouer_coup(coup_IA,1)
+        arb=arb_p4(self.difficulte,jeu,[jeu.derniers_coups[0],jeu.derniers_coups[1]],1)
+        minimax(arb,eval,1,self.difficulte)   
+        coupIA=f"{quelcoup(trajet(arb))}"
+        jeu.jouer_coup(coupIA,1)
 
   

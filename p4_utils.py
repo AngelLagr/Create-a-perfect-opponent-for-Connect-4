@@ -50,12 +50,12 @@ def quelcoup(arbre)->str:
         return arbre.__repr__()[-1]
     
 ##Fonction de test pour l'euristie###################################################################
-def diagonale(L:list)->list:
+def diagonale(grille_l:list)->list:
     """
 
     Parameters
     ----------
-    L : list
+    grille_l : list
         Liste de liste des colonnes d'une grille.
 
     Returns
@@ -65,18 +65,18 @@ def diagonale(L:list)->list:
 
     """
     
-    diagdroite = [[] for i in range(len(L) + len(L[0]) - 1)]
-    diaggauche = [[] for i in range(len(diagdroite))]
-    min_diaggauche = -len(L) + 1
-    for x in range(len(L[0])):
-        for y in range(len(L)):
-            diagdroite[x+y].append(L[y][x])
-            diaggauche[x-y-min_diaggauche].append(L[y][x])
+    diagdroite = [[] for _ in range(len(grille_l) + len(grille_l[0]) - 1)]
+    diaggauche = [[] for _ in range(len(diagdroite))]
+    min_diaggauche = -len(grille_l) + 1
+    for x in range(len(grille_l[0])):
+        for y in range(len(grille_l)):
+            diagdroite[x+y].append(grille_l[y][x])
+            diaggauche[x-y-min_diaggauche].append(grille_l[y][x])
     
     diag=diagdroite+diaggauche
     return diag
 
-def VerifVictoire(arb,joueur:int) -> int:
+def verif_victoire(arb,joueur:int) -> int:
     """
     
 
@@ -113,9 +113,9 @@ def VerifVictoire(arb,joueur:int) -> int:
             nombre=1
     
     
-    L=diagonale(arb.get_etat()) # on teste en diagonale si des pions sont alignés
-    for i in range(len(L)):
-        chaine="".join(L[i])
+    grille_l=diagonale(arb.get_etat()) # on teste en diagonale si des pions sont alignés
+    for i in range(len(grille_l)):
+        chaine="".join(grille_l[i])
         
         if arb.get_nombrejetons()*pion in chaine and arb.get_nombrejetons()*autrepion in chaine :
             return 0
@@ -137,7 +137,7 @@ def VerifVictoire(arb,joueur:int) -> int:
     if nombre==3:
         return "rien"
 
-def Verifligne(arbre,coupjoue:'str', joueur:int) -> int:
+def verif_ligne(arbre,coupjoue:'str', joueur:int) -> int:
     """
     
     Parameters
@@ -159,9 +159,9 @@ def Verifligne(arbre,coupjoue:'str', joueur:int) -> int:
     arb=arbre.copie()
     nombre=0    
     grilletest=deepcopy(arb.get_etat())
-    P4test=Puissance4(grilletest,arb.get_colonne(),arb.get_rangee())
+    p4test=Puissance4(grilletest,arb.get_colonne(),arb.get_rangee())
     colonnelettre=Alphabet[0:arb.get_colonne()].index(coupjoue)#on recup les positions du coup posé
-    lignelettre=P4test.grille[colonnelettre].index(pion)
+    lignelettre=p4test.grille[colonnelettre].index(pion)
     # On créer une liste des indices suceptibles d'arriver dans les alignements de win
     pasgauche=min(arb.get_nombre_jetons_victoire()-1,colonnelettre) #la place disponible a gauche
     pasdroite=min(arb.get_nombre_jetons_victoire(),arb.get_colonne()-colonnelettre)#la place disponible a droite
@@ -171,14 +171,14 @@ def Verifligne(arbre,coupjoue:'str', joueur:int) -> int:
         if indicolonne<=colonnelettre:
             if indicolonne+arb.get_nombre_jetons_victoire()<=arb.get_colonne() : bornedroite=indicolonne+arb.get_nombre_jetons_victoire() # le cas particulier où l'on depasserait sur la droite
             else: bornedroite=arb.get_colonne()-indicolonne
-            listecaract=[P4test.grille[i][lignelettre] for i in range(indicolonne,bornedroite)]#on créé une liste qui prend les caractères voisins
+            listecaract=[p4test.grille[i][lignelettre] for i in range(indicolonne,bornedroite)]#on créé une liste qui prend les caractères voisins
             if len(listecaract)>=arb.get_nombre_jetons_victoire(): # si la liste est plus petite que le nombre de jetons necessaires à la victoire c'est inutile de continuer
                 carac=''.join(listecaract) 
                 k=0 # on initialise un compteur, ce dernier grandi si les coups d'alignements possibles sont faisable directement ce qui augmentera la valeur
                 for p in range(0,len(carac)):
                     if carac[p] == pion : nombre+=0.25 #s'il y a déja des pions placés c'est mieux
                     if lignelettre<arb.get_rangee()-1:    
-                        if P4test.grille[indicolonne+p][lignelettre+1]!=" ":
+                        if p4test.grille[indicolonne+p][lignelettre+1]!=" ":
                             # si jamais il n'y a rien en dessous, ce n'est pas possible tout de suite donc moins de valeur
                              k+=0.1
                     else:
@@ -220,7 +220,7 @@ def compte_pion(arbre,joueur:int)->int:
     else:
         return -nombre
 
-def Verifdiag(arbre,coupjoue:str,joueur:int)->int:
+def verif_diag(arbre,coupjoue:str,joueur:int)->int:
     """
 
     Parameters
@@ -241,9 +241,9 @@ def Verifdiag(arbre,coupjoue:str,joueur:int)->int:
     """
     arb=arbre.copie()   
     grilletest=deepcopy(arb.get_etat())
-    P4test=Puissance4(grilletest,arb.get_colonne(),arb.get_rangee())
+    p4test=Puissance4(grilletest,arb.get_colonne(),arb.get_rangee())
     
-    Listediag=diagonale(arbre.get_etat())
+    listediag=diagonale(arbre.get_etat())
 
     if arbre.get_joueur()==0 : pion,autrepion="X","O"
     elif arbre.get_joueur()==1 : pion,autrepion="O","X"
@@ -251,20 +251,19 @@ def Verifdiag(arbre,coupjoue:str,joueur:int)->int:
     nombre=0
     colonnelettre=Alphabet[0:arbre.get_colonne()].index(coupjoue)#on recup les positions du coup joué
 
-    lignelettre=P4test.grille[colonnelettre].index(pion)
+    lignelettre=p4test.grille[colonnelettre].index(pion)
     
     
     
     ##################DIAGONALE DESCENDANTE##############################
     indicediag=colonnelettre+lignelettre #on repère dans quelle diagonale est notre coup 
     indicerangee=lignelettre
-    diagonalecoup=Listediag[indicediag]
+    diagonalecoup=listediag[indicediag]
     if len(diagonalecoup)>= arb.get_nombre_jetons_victoire():
         for i in range(0,arb.get_nombre_jetons_victoire()+1):#on analyse chaque enchainement d'alignement possible sur la même diagonale
             carac=''.join(diagonalecoup[indicerangee-arb.get_nombre_jetons_victoire()+i:indicerangee+i])
 
-            if len(carac)>=4:
-                if not autrepion in carac and pion in carac: 
+            if len(carac)>=4 and (not autrepion in carac) and (pion in carac): 
                     nombre=nombre+0.35
                     for p in carac: 
                         if p == pion : nombre+=0.25 #s'il y a déja des pions placés c'est mieux
@@ -272,28 +271,27 @@ def Verifdiag(arbre,coupjoue:str,joueur:int)->int:
     ##################DIAGONALE ASCENDANTE##############################
     indicediag=-colonnelettre+lignelettre-arb.get_colonne()+1 #on repère dans quelle diagonale est notre coup 
     indicerangee=lignelettre
-    diagonalecoup=Listediag[indicediag]
+    diagonalecoup=listediag[indicediag]
     if len(diagonalecoup)>= arb.get_nombre_jetons_victoire():
         for i in range(0,arb.get_nombre_jetons_victoire()+1):#on analyse chaque enchainement d'alignement possible sur la même diagonale
             carac=''.join(diagonalecoup[indicerangee-arb.get_nombre_jetons_victoire()+i:indicerangee+i])
 
-            if len(carac)>=4:
-                if not autrepion in carac and pion in carac: 
-                    nombre=nombre+0.35
-                    for p in carac: 
-                        if p == pion : nombre+=0.25 #s'il y a déja des pions placés c'est mieux                
+            if len(carac)>=4 and (not autrepion in carac) and (pion in carac): 
+                nombre=nombre+0.35
+                for p in carac: 
+                    if p == pion : nombre+=0.25 #s'il y a déja des pions placés c'est mieux                
                     
     if arbre.get_joueur()!=joueur:
         return nombre
     else:
         return -nombre
             
-def maxi(L:list)->int:
+def maxi(grille_l:list)->int:
     """
 
     Parameters
     ----------
-    L : list
+    grille_l : list
         Liste d'elements.
 
     Returns
@@ -303,13 +301,13 @@ def maxi(L:list)->int:
         Ex : maxi([-10,15,-30]) renvera -30
 
     """
-    Labs=[]
-    for i in range(len(L)):
-        Labs.append(abs(L[i]))
-    return L[Labs.index(max(Labs))]
+    labs=[]
+    for i in range(len(grille_l)):
+        labs.append(abs(grille_l[i]))
+    return grille_l[labs.index(max(labs))]
  
 
-def Evaluation(arb,joueur:int)->int: 
+def eval(arb,joueur:int)->int: 
     """
     
 
@@ -329,13 +327,13 @@ def Evaluation(arb,joueur:int)->int:
     #je ne pense pas qu'il y ait de bonnes ou de mauvaises situations... 
     
     listevaleur=[]
-    testvict=VerifVictoire(arb, joueur)
+    testvict=verif_victoire(arb, joueur)
     if testvict!="rien":
         listevaleur.append(testvict)
     coupjoue=quelcoup(arb)
     
     if coupjoue in Alphabet[0:arb.get_colonne()]:
-       listevaleur.append(Verifdiag(arb,coupjoue ,joueur)+Verifligne(arb,coupjoue ,joueur)) #on va vers le point qui donne le plus de possibilité d'aligner n coup
+       listevaleur.append(verif_diag(arb,coupjoue ,joueur)+verif_ligne(arb,coupjoue ,joueur)) #on va vers le point qui donne le plus de possibilité d'aligner n coup
     
 
     if listevaleur==[] : return compte_pion(arb, joueur) #on renvoie la valeur la plus importante pour chaque situation
@@ -344,14 +342,14 @@ def Evaluation(arb,joueur:int)->int:
 
     
     
-def arb_P4(pmax:int,P4:Puissance4,dernierCoup=["",""],joueur=1):
+def arb_p4(pmax:int,p4:Puissance4,dernierCoup=["",""],joueur=1):
     """
 
     Parameters
     ----------
     pmax : int
         Valeur de la profondeur de l'arborescence.
-    P4 : Puissance4
+    p4 : Puissance4
         Puissance 4.
     dernierCoup : list, optional
         Derniers coup joué par les deux joueur, la première valeur est le dernier coup du joueur 0
@@ -362,16 +360,16 @@ def arb_P4(pmax:int,P4:Puissance4,dernierCoup=["",""],joueur=1):
     Returns
     -------
     IA
-        Retourne une arborescence des coups possibles à une profondeur pmax en partant d'un etat de base du P4 donné.
+        Retourne une arborescence des coups possibles à une profondeur pmax en partant d'un etat de base du p4 donné.
 
     """
-    A=IA(pmax,P4.grille,joueur)
-    A.set__colonne(P4.colonne)
-    A.set__rangee(P4.rangee)
+    A=IA(pmax,p4.grille,joueur)
+    A.set__colonne(p4.colonne)
+    A.set__rangee(p4.rangee)
     A.set_derniercoup(dernierCoup[1-joueur])
     couppreced=dernierCoup[:]
     def fin(arborescence):
-        if VerifVictoire(A, joueur)==100 or VerifVictoire(A, joueur)==-100 or max([arborescence.get_etat()[i].count(" ") for i in range(arborescence.get_colonne())])==0:
+        if verif_victoire(A, joueur)==100 or verif_victoire(A, joueur)==-100 or max([arborescence.get_etat()[i].count(" ") for i in range(arborescence.get_colonne())])==0:
             return True
         else:
             return False
@@ -388,17 +386,17 @@ def arb_P4(pmax:int,P4:Puissance4,dernierCoup=["",""],joueur=1):
                 for lettre in Alphabet[0:A.get_colonne()]:
                      if " " in A.get_etat()[Alphabet[0:A.get_colonne()].index(lettre)]:
                          couppreced[joueur]=lettre
-                         nouvP4=P4.copie()
+                         nouvP4=p4.copie()
                          nouvP4.jouer_colonne(lettre,joueur)
-                         A.ajout_ss_arb(arb_P4(pmax-1,nouvP4,couppreced,1-joueur))
+                         A.ajout_ss_arb(arb_p4(pmax-1,nouvP4,couppreced,1-joueur))
         else:
              ##On teste tout les placements possibles#######################
              for lettre in Alphabet[0:A.get_colonne()]:
                  if " " in A.get_etat()[Alphabet[0:A.get_colonne()].index(lettre)]:
                      couppreced[joueur]=lettre
-                     nouvP4=P4.copie()
+                     nouvP4=p4.copie()
                      nouvP4.jouer_colonne(lettre,joueur)
-                     A.ajout_ss_arb(arb_P4(pmax-1,nouvP4,couppreced,1-joueur))
+                     A.ajout_ss_arb(arb_p4(pmax-1,nouvP4,couppreced,1-joueur))
                      
              ##On teste les rotations#######################################
              #pas rotations si le joueur viens d'en faire une
@@ -407,38 +405,38 @@ def arb_P4(pmax:int,P4:Puissance4,dernierCoup=["",""],joueur=1):
                  
                  #Rotation vers la gauche######
                  couppreced[joueur]="+"
-                 nouvP4=P4.copie()
+                 nouvP4=p4.copie()
                  nouvP4.rotation_plus()
-                 A.ajout_ss_arb(arb_P4(pmax-1,nouvP4,couppreced,1-joueur))
+                 A.ajout_ss_arb(arb_p4(pmax-1,nouvP4,couppreced,1-joueur))
                  
                  #Rotation vers la droite######
                  couppreced[joueur]="-"
-                 nouvP4=P4.copie()
+                 nouvP4=p4.copie()
                  nouvP4.rotation_moins()
-                 A.ajout_ss_arb(arb_P4(pmax-1,nouvP4,couppreced,1-joueur))
+                 A.ajout_ss_arb(arb_p4(pmax-1,nouvP4,couppreced,1-joueur))
                  
              ##On teste les décalages#######################################
              #pas décalage si le joueur viens d'en faire un
              if dernierCoup[1-joueur]!=">" and dernierCoup[1-joueur]!="<":
                  couppreced[joueur]="<"
-                 nouvP4=P4.copie()
+                 nouvP4=p4.copie()
                  nouvP4.decalage_gauche()
-                 A.ajout_ss_arb(arb_P4(pmax-1,nouvP4,couppreced,1-joueur))
+                 A.ajout_ss_arb(arb_p4(pmax-1,nouvP4,couppreced,1-joueur))
                 
                  couppreced[joueur]=">"
-                 nouvP4=P4.copie()
+                 nouvP4=p4.copie()
                  nouvP4.decalage_droit()
-                 A.ajout_ss_arb(arb_P4(pmax-1,nouvP4,couppreced,1-joueur))
+                 A.ajout_ss_arb(arb_p4(pmax-1,nouvP4,couppreced,1-joueur))
              
              
              ##On teste les bombes#######################################
-             if P4.bombes[joueur]!=0:
+             if p4.bombes[joueur]!=0:
                  for lettre in Alphabet[0:A.get_colonne()]:
                      couppreced[joueur]="*"+lettre 
-                     nouvP4=P4.copie()
+                     nouvP4=p4.copie()
                      nouvP4.bombe(lettre)
                      nouvP4.bombes[joueur]-=1
-                     A.ajout_ss_arb(arb_P4(pmax-1,nouvP4,couppreced,1-joueur))  
+                     A.ajout_ss_arb(arb_p4(pmax-1,nouvP4,couppreced,1-joueur))  
                      
              
     return A
@@ -516,7 +514,7 @@ def trajet(arbre):
     maxi=arbre.get_sous_arb()[i].get_valeur()
     trajet=arbre.get_sous_arb()[i]
     for sousarb in arbre.get_sous_arb():
-        if maxi<sousarb.get_valeur() and (sousarb.get_valeur()!=0 or VerifVictoire(sousarb,sousarb.get_joueur())==0):
+        if maxi<sousarb.get_valeur() and (sousarb.get_valeur()!=0 or verif_victoire(sousarb,sousarb.get_joueur())==0):
             maxi = sousarb.get_valeur()
             trajet=sousarb
     return trajet
@@ -525,18 +523,18 @@ def testia():
     grilletest=[[" "," "," "," ","X","O"],[" "," "," ","X","X","O"],[" "," ","X","O","X","O"],[" "," "," "," ","O","X"],[" "," "," "," "," "," "],[" "," "," "," "," "," "],[" "," "," "," "," "," "]]
     print("On réalise les tests avec une IA de niveau 2 sur une grille 7 par 6 avec comme dernier coup '-' pour le joueur 0, et 'C' pour le joueur 1, c'est au joueur 1 de jouer")
     G=Puissance4(grilletest,["-","C"])       
-    Arb=arb_P4(2,G,["-","C"],1)
-    minimax(Arb, Evaluation, 1, 2)
+    arb=arb_p4(2,G,["-","C"],1)
+    minimax(arb, eval, 1, 2)
     print("on affiche les coups possibles grace au sous arbre du sommet initial :")
-    for sousarb in Arb.get_sous_arb():
+    for sousarb in arb.get_sous_arb():
         affichage(sousarb)
         print(f"Le coup réalisé pour arriver à cet état est : {quelcoup(sousarb)}")
         print(f"valeur de la sous arborescence : {sousarb.get_valeur()}")
         if sousarb.get_valeur()==0:
-            print(f"le coup à été élagé donc n'est pas pris en compte, sa valeur est 0, celle de base")
+            print("le coup à été élagé donc n'est pas pris en compte, sa valeur est 0, celle de base")
         if quelcoup(sousarb) in Alphabet[:7]:
-            print(f"La valeur dependants des diagonales dispo grace au coup : {Verifdiag(sousarb,quelcoup(sousarb),1)} ")
-            print(f"La valeur dependants des lignes dispo grace au coup : {Verifligne(sousarb,quelcoup(sousarb),1)} ")
-    print(f"Le coup avec le plus de valeur est {quelcoup(trajet(Arb))}")
+            print(f"La valeur dependants des diagonales dispo grace au coup : {verif_diag(sousarb,quelcoup(sousarb),1)} ")
+            print(f"La valeur dependants des lignes dispo grace au coup : {verif_ligne(sousarb,quelcoup(sousarb),1)} ")
+    print(f"Le coup avec le plus de valeur est {quelcoup(trajet(arb))}")
     print("Le coup de l'IA menera donc à l'état :")
-    affichage(trajet(Arb))
+    affichage(trajet(arb))

@@ -23,40 +23,41 @@ def main_jvj():
 
     """
     grille = [[" "," "," "," "," "," "],[" "," "," "," "," "," "],[" "," "," "," "," "," "],[" "," "," "," "," "," "],[" "," "," "," "," "," "],[" "," "," "," "," "," "],[" "," "," "," "," "," "]]
-    G=Puissance4(grille)
+    g_puissance=Puissance4(grille)
     joueur=0
-    while G.victoire()[1]==3:
+    erreur_String = "Vous ne pouvez pas jouer ce coup"
+    while g_puissance.victoire()[1]==3:
         if joueur == 0 : 
             coupjoueur=input("Le coup du joueur 0 est : ")
                     
             #condition et Debug:
-            if coupjoueur=="break" or G.victoire()[0]==True:
+            if coupjoueur=="break" or g_puissance.victoire()[0]==True:
                 break
             
             #Le joueur joue :
-            if G.jouer_coup(coupjoueur,joueur)==False: # si le coup n'aboutit pas on ne fais rien
-                print("TU PEUX PAS")
+            if g_puissance.jouer_coup(coupjoueur,joueur)==False: # si le coup n'aboutit pas on ne fais rien
+                print(erreur_String)
                 joueur = 1 - joueur 
                 
         elif joueur == 1: 
             coupjoueur=input("Le coup du joueur 1 est : ")
                     
             #condition et Debug:
-            if coupjoueur=="break" or G.victoire()[0]==True:
+            if coupjoueur=="break" or g_puissance.victoire()[0]==True:
                 break
             
             #Le joueur joue :
-            if G.jouer_coup(coupjoueur,joueur)==False: # si le coup n'aboutit pas on ne fais rien
-                print("TU PEUX PAS")
+            if g_puissance.jouer_coup(coupjoueur,joueur)==False: # si le coup n'aboutit pas on ne fais rien
+                print(erreur_String)
                 joueur = 1 - joueur 
         
         else:
             print("problème de joueur")
             
         joueur = 1 - joueur 
-        G.affichage()
+        g_puissance.affichage()
             
-    print(f'Le joueur n°{G.victoire()[1]} a Gagne')
+    print(f'Le joueur n°{g_puissance.victoire()[1]} a Gagne')
 
 ##Main en Joueur contre IA 
 def jeu_ia():
@@ -69,37 +70,38 @@ def jeu_ia():
 
     """
     grille = [[" "," "," "," "," "," "],[" "," "," "," "," "," "],[" "," "," "," "," "," "],[" "," "," "," "," "," "],[" "," "," "," "," "," "],[" "," "," "," "," "," "],[" "," "," "," "," "," "]]
-    G=Puissance4(grille)
+    g_puissance=Puissance4(grille)
     difficulte=int(input("Difficulte de l'IA : "))
     coupIA=" "
-    while G.victoire()[1]==3:
+    erreur_String = "Vous ne pouvez pas jouer ce coup"
+    while g_puissance.victoire()[1]==3:
         coupjoueur=input("Le coup joue est : ")
                 
         #condition et Debug:
-        if coupjoueur=="break" or G.victoire()[0]==True:
-            if G.victoire()[1]==0 : return "Le joueur n°0 a Gagne"
+        if coupjoueur=="break" or g_puissance.victoire()[0]==True:
+            if g_puissance.victoire()[1]==0 : return "Le joueur n°0 a Gagne"
             break
         
         #Le joueur joue :
-        if G.jouer_coup(coupjoueur,0)==False: # si le coup n'aboutit pas on ne fais rien
-            print("TU PEUX PAS")
-            G.affichage()
+        if g_puissance.jouer_coup(coupjoueur,0)==False: # si le coup n'aboutit pas on ne fais rien
+            print(erreur_String)
+            g_puissance.affichage()
            
-        if G.victoire()[1]==0:
+        if g_puissance.victoire()[1]==0:
             break
         else: # si le coup aboutit on laisse l'IA jouer
             #l'IA joue:  
             
-            Arb=arb_P4(difficulte,G,[coupjoueur,coupIA],1)
-            minimax(Arb,Evaluation,1,difficulte)   
+            arb=arb_p4(difficulte,g_puissance,[coupjoueur,coupIA],1)
+            minimax(arb,eval,1,difficulte)   
             
-            coupIA=f"{trajet(Arb)}"[-1]
+            coupIA=f"{trajet(arb)}"[-1]
             
             print(f"\n COUP DE L'IA : {coupIA}")
-            G.jouer_coup(coupIA,1)
-            G.affichage()
+            g_puissance.jouer_coup(coupIA,1)
+            g_puissance.affichage()
         
-    print(f'Le joueur n°{G.victoire()[1]} a Gagne')
+    print(f'Le joueur n°{g_puissance.victoire()[1]} a Gagne')
 
 ##Tkinter
 
@@ -121,13 +123,13 @@ def menu():
     menu_principal.configure(bg="#FFEBCD")
     
     #Type de Jeu
-    Frame_mode= Frame(menu_principal, borderwidth=2, relief=GROOVE,bg="#F5DEB3")
-    Label(Frame_mode, text="Mode",bg="#F5DEB3").pack(padx=10, pady=10)
+    frame_mode= Frame(menu_principal, borderwidth=2, relief=GROOVE,bg="#F5DEB3")
+    Label(frame_mode, text="Mode",bg="#F5DEB3").pack(padx=10, pady=10)
     
     #Difficulte
-    Frame_difficulte = Frame(Frame_mode, borderwidth=2, relief=GROOVE,bg="#FFEBCD")
-    Frame_difficulte.pack(padx=50,pady=10)
-    Label(Frame_difficulte, text="Difficulte IA / JVJ ",bg="#FFEBCD").pack(padx=10, pady=10)
+    frame_difficulte = Frame(frame_mode, borderwidth=2, relief=GROOVE,bg="#FFEBCD")
+    frame_difficulte.pack(padx=50,pady=10)
+    Label(frame_difficulte, text="Difficulte IA / JVJ ",bg="#FFEBCD").pack(padx=10, pady=10)
     
     def updateDifficulte(event=None): #fonction qui permet de modifier le label d'affichafe de la difficulte 
         global d
@@ -136,7 +138,7 @@ def menu():
 
     d=StringVar()
     
-    difficulte = Listbox(Frame_difficulte)
+    difficulte = Listbox(frame_difficulte)
     difficulte.insert(1,"Joueur contre Joueur")
     difficulte.insert(2, "1")
     difficulte.insert(3, "2")
@@ -149,10 +151,10 @@ def menu():
 
     difficulte.pack()
 
-    lbl = Label(Frame_mode, textvariable=d,bg="#F5DEB3")
+    lbl = Label(frame_difficulte, textvariable=d,bg="#F5DEB3")
     lbl.pack()
 
-    Frame_mode.grid(row=0,column=1,padx=10,pady=10)
+    frame_difficulte.grid(row=0,column=1,padx=10,pady=10)
 
    
     #Rangee
@@ -225,7 +227,7 @@ def lancer():
     """
     global menu_principal,jeu,d
     if d.get()=='':
-        erreurLancement = messagebox.showerror("Erreur de Difficulte", "Veuillez selectionner une difficulte")
+        messagebox.showerror("Erreur de Difficulte", "Veuillez selectionner une difficulte")
     else:
         menu_principal.iconify()
         jeuP4()
@@ -235,13 +237,13 @@ def lancer():
 
 ##Dessin de la Grille
 
-def dessine_tab(G):
+def dessine_tab(g_puissance):
     """
     Dessine un etat du jeu de Puissance 4 sur tkinter en créant un rectangle pour chaque case 
 
     Parameters
     ----------
-    G : Puissance4
+    g_puissance : Puissance4
         
     Returns
     -------
@@ -250,15 +252,15 @@ def dessine_tab(G):
     """
     global canvas,fen,cote
     canvas.delete("all")
-    for l in range(G.rangee):
-        for p in range(G.colonne):
+    for l in range(g_puissance.rangee):
+        for p in range(g_puissance.colonne):
             canvas.create_rectangle(cote*(p+1),cote*(l+1/2),cote*(p+2),cote*(l+3/2),fill="white",outline="blue",width=2)
-            if G.grille[p][l]=="O":
+            if g_puissance.grille[p][l]=="O":
                 canvas.create_oval(cote*(p+1),cote*(l+1/2),cote*(p+2),cote*(l+3/2),fill="red",outline="black",width=2)
-            elif G.grille[p][l]=="X": 
+            elif g_puissance.grille[p][l]=="X": 
                 canvas.create_oval(cote*(p+1),cote*(l+1/2),cote*(p+2),cote*(l+3/2),fill="yellow",outline="black",width=2)
-    for i in range(G.colonne):
-        txt = canvas.create_text(cote*(i+3/2),G.rangee*cote+75, text=Alphabet[i], font="Arial 16 italic", fill="blue")
+    for i in range(g_puissance.colonne):
+        canvas.create_text(cote*(i+3/2),g_puissance.rangee*cote+75, text=Alphabet[i], font="Arial 16 italic", fill="blue")
     fen.update()
 
 ##Coup Joueur
@@ -274,19 +276,19 @@ def getCoup(event):
 
 def victoire_tk(j):
     time.sleep(1)
-    MsgBox = messagebox.showwarning("Victoire", f"Victoire du joueur {j}")
-    if MsgBox == 'ok':
+    msg_Box = messagebox.showwarning("Victoire", f"Victoire du joueur {j}")
+    if msg_Box == 'ok':
        fen.destroy()
        menu_principal.deiconify()
 
 ##Main Joueur Contre Joueur 
 
-def main_jvj_tk(G):
+def main_jvj_tk(g_puissance):
     global jeu,menu_principal,vr,vc,nj,d,fen,canvas,coup,c,label_joueur
     joueur=0
-    while G.victoire()[1]==3:
+    while g_puissance.victoire()[1]==3:
         label_joueur.config(text=f"C'est au tour du joueur {joueur}")
-        if joueur == 0 : 
+        if joueur == 0 or joueur == 1: 
             coupjoueur=c.upper()
             c=''
             
@@ -294,41 +296,24 @@ def main_jvj_tk(G):
                 joueur=1-joueur
                 
             #condition et Debug:
-            elif coupjoueur=="break" or G.victoire()[0]==True:
+            elif coupjoueur=="break" or g_puissance.victoire()[0]==True:
                 break
             
             #Le joueur joue :
-            elif G.jouer_coup(coupjoueur,joueur)==False: # si le coup n'aboutit pas on ne fais rien
-                MessageErreur = messagebox.showinfo("Erreur de Coup", "Vous ne pouvez pas jouer ce coup")
+            elif g_puissance.jouer_coup(coupjoueur,joueur)==False: # si le coup n'aboutit pas on ne fais rien
+                messagebox.showinfo("Erreur de Coup", "Vous ne pouvez pas jouer ce coup")
                 joueur=1-joueur
                 
-        elif joueur == 1: 
-            coupjoueur=c.upper()
-            c=''
-            
-            if coupjoueur=="":
-                joueur=1-joueur
-                    
-            #condition et Debug:
-            elif coupjoueur=="break" or G.victoire()[0]==True:
-                break
-            
-            #Le joueur joue :
-            elif G.jouer_coup(coupjoueur,joueur)==False: # si le coup n'aboutit pas on ne fais rien
-                MessageErreur = messagebox.showinfo("Erreur de Coup", "Vous ne pouvez pas jouer ce coup")
-                joueur = 1 - joueur 
-
-        
         else:
             print("Probleme de Joueur")
             
         joueur = 1 - joueur 
-        dessine_tab(G)
+        dessine_tab(g_puissance)
             
-    victoire_tk(G.victoire()[1])
+    victoire_tk(g_puissance.victoire()[1])
 
 ##Main Joueur VS IA
-def coup_IA(etat:Puissance4,d:int,coupjoueur:str,coupIA:str):
+def coup_ia(etat:Puissance4,d:int,coupjoueur:str,coupIA:str):
     """
     permet de recuperer le coup jouer par l'IA
     """
@@ -336,26 +321,26 @@ def coup_IA(etat:Puissance4,d:int,coupjoueur:str,coupIA:str):
     label_joueur.config(text="L'IA Joue ( Jaune )")
     
     fen.update()
-    Arb=arb_P4(d,etat,[coupjoueur,coupIA],1)
-    minimax(Arb,Evaluation,1,d)   
+    arb=arb_p4(d,etat,[coupjoueur,coupIA],1)
+    minimax(arb,eval,1,d)   
     
-    coupIA=f"{quelcoup(trajet(Arb))}"
+    coupIA=f"{quelcoup(trajet(arb))}"
     
     label_IA.config(text=f"Le coup de L'IA est : {coupIA}")
     print(coupIA)
     
     return(coupIA)
 
-def main_IA(G):
+def main_ia(g_puissance):
     global jeu,menu_principal,vr,vc,nj,d,fen,canvas,coup,c,label_joueur,label_IA
     difficulte=int(d.get())
     
     label_IA=Label(fen)
     label_IA.grid(row=3,column=1)
     label_IA.config(bg="#FFEBCD")
-    
-    while G.victoire()[1]==3:
-        label_joueur.config(text=f"C'est au tour du Joueur Humain ( Rouge )")
+    erreur_String = "Vous ne pouvez pas jouer ce coup"
+    while g_puissance.victoire()[1]==3:
+        label_joueur.config(text="C'est au tour du Joueur Humain ( Rouge )")
         coupjoueur=c.upper()
         c=''
         
@@ -363,27 +348,27 @@ def main_IA(G):
             c+=c
     
         #condition et Debug:
-        elif coupjoueur=="break" or G.victoire()[0]==True:
+        elif coupjoueur=="break" or g_puissance.victoire()[0]==True:
             break
         
         #Le joueur joue :
-        elif G.jouer_coup(coupjoueur,0)==False: # si le coup n'aboutit pas on ne fais rien
-            label_IA.config(text="Tu pEuX pAS")
+        elif g_puissance.jouer_coup(coupjoueur,0)==False: # si le coup n'aboutit pas on ne fais rien
+            label_IA.config(text=erreur_String)
         
-        elif G.victoire()[1]==0:
-            dessine_tab(G)
+        elif g_puissance.victoire()[1]==0:
+            dessine_tab(g_puissance)
             break
         
         else: # si le coup aboutit on laisse l'IA jouer
             #l'IA joue:
-            cj,cia=G.derniers_coups[0], G.derniers_coups[1] 
-            c_ia=coup_IA(G,difficulte,cj,cia)
-            G.jouer_coup(c_ia,1)
+            cj,cia=g_puissance.derniers_coups[0], g_puissance.derniers_coups[1] 
+            c_ia=coup_ia(g_puissance,difficulte,cj,cia)
+            g_puissance.jouer_coup(c_ia,1)
             
-        dessine_tab(G)
+        dessine_tab(g_puissance)
         
             
-    victoire_tk(G.victoire()[1])
+    victoire_tk(g_puissance.victoire()[1])
 
 
 def jeuP4():
@@ -405,7 +390,7 @@ def jeuP4():
     fen.minsize(int(6/5*larFen),int(2*hautFen))
     fen.configure(bg="#FFEBCD")
     
-    gP4 = [[" " for i in range(rangee)] for j in range(colonne)]
+    gP4 = [[" " for _ in range(rangee)] for _ in range(colonne)]
     jeu=Puissance4(gP4,["",""],[1,1],["O","X"],colonne,rangee,nombre_a_aligner)
     
     m=max(larFen,hautFen)
@@ -434,7 +419,7 @@ def jeuP4():
         main_jvj_tk(jeu)
     
     else :
-        main_IA(jeu)
+        main_ia(jeu)
         
     
     fen.mainloop()
